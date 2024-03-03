@@ -53,8 +53,8 @@ class Army {
 async function getInput() {
     // Get all currently existing civs in the game
     const possibleCivs = await getCivs();
-    const army1 = {}
-    const army2 = {}
+    const army1 = []
+    const army2 = []
 
     // Get player 1 civ choice
     const civ1 = await inputQuestion(`Give civ for player 1\n${possibleCivs}\n`, possibleCivs);
@@ -66,7 +66,8 @@ async function getInput() {
         const unit = await inputQuestion(`Add unit to player 1 army\n${possibleUnits1}\n`, possibleUnits1);
         const unitStats = await getStats(civ1, unit);
         const unitQt = await inputAmount(`Amount of ${unit} units to place\n`);
-        army1[unitStats] = unitQt;
+        unitStats.amount = Number(unitQt);
+        army1.push(unitStats);
         console.log(`Added ${unitQt} unit(s) of ${unit} to the army of player 1`);
         const progress = await inputQuestion('(A)dd another unit or (C)ontinue?\n', ['a', 'A', 'c', 'C']);
         if (progress === 'c' || progress === 'C') {
@@ -84,7 +85,8 @@ async function getInput() {
         const unit = await inputQuestion(`Add unit to player 2 army\n${possibleUnits2}\n`, possibleUnits2);
         const unitStats = await getStats(civ2, unit);
         const unitQt = await inputAmount(`Number of ${unit} units to place\n`);
-        army2[unitStats] = unitQt;
+        unitStats.amount = Number(unitQt);
+        army2.push(unitStats);
         console.log(`Added ${unitQt} unit(s) of ${unit} to the army of player 2`);
         const progress = await inputQuestion('(A)dd another unit or (C)ontinue?\n', ['a', 'A', 'c', 'C']);
         if (progress === 'c' || progress === 'C') {

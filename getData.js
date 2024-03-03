@@ -4,6 +4,7 @@ const path = require('path')
 const civURL = 'https://github.com/aoe4world/data/tree/main/civilizations';
 // The url to the aoe4world repo's location of all units
 const unitURL = 'https://github.com/aoe4world/data/tree/main/units';
+const rawUnitURL = 'https://raw.githubusercontent.com/aoe4world/data/main/units';
 
 // Get all the current possible civilizations in the game
 async function getCivs() {
@@ -25,7 +26,7 @@ async function getCivs() {
 // Get all the stats for the given unit and civ
 async function getStats(civ, unit) {
     try {
-        const response = await fetch(`${unitURL}/${civ}/${unit}.json?raw=true`);
+        const response = await fetch(`${rawUnitURL}/${civ}/${unit}.json`);
         const rawStats = await response.json();
         const stats = {
             id: rawStats.id,
@@ -47,12 +48,22 @@ async function getStats(civ, unit) {
 // Get all the current possible units for the given civ
 async function getUnits(civ) {
     try {
-        const response = await fetch(`${unitURL}/${civ}`);
+        const response = await fetch(`${rawUnitURL}/${civ}.json`);
         const json = await response.json();
-        const rawUnits = json.payload.tree.items;
+        const rawUnits = json.data;
         const units = [];
         for (const unit of rawUnits) {
-            units.push(path.parse(unit.name).name);
+            // Removed certain classes of units
+            if (!unit.classes.includes('ship') && 
+                !unit.classes.includes('warship') &&
+                // Also removes villagers, add them back in later?
+                !unit.classes.includes('worker') &&
+                !unit.classes.includes('siege') &&
+                // I think the healing logic can be added easily later
+                // will put them back in then
+                !unit.classes.includes('religious')) {
+                units.push(path.parse(unit.id).name);
+            }
         }
         return units;
     } catch (err) {
