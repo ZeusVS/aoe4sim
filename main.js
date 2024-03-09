@@ -7,6 +7,7 @@ async function main() {
     // army = [armyunit1, armyunit2,...]
     // armyunit = object {id, name, classes, hitpoints, weapons, armor, movement, amount}
     const userInput = await getInput();
+    console.log(userInput);
     simulateCombat(userInput);
 }
 

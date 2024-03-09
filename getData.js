@@ -58,9 +58,8 @@ async function getUnits(civ) {
                 !unit.classes.includes('warship') &&
                 // Also removes villagers, add them back in later?
                 !unit.classes.includes('worker') &&
+                // Siege and religious will be added later probably
                 !unit.classes.includes('siege') &&
-                // I think the healing logic can be added easily later
-                // will put them back in then
                 !unit.classes.includes('religious')) {
                 units.push(path.parse(unit.id).name);
             }
