@@ -58,10 +58,10 @@ async function getPlayerInput(player) {
 }
 
 async function getInput() {
+    // Get civ and army and unpack them into variables
     const {civ: civ1, army: army1} = await getPlayerInput(1);
     const {civ: civ2, army: army2} = await getPlayerInput(2);
-
-    // Return inputClass with data filled in
+    // Return everything as an object
     return {civ1, army1, civ2, army2}
 }
 

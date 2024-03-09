@@ -6,69 +6,47 @@ const civURL = 'https://github.com/aoe4world/data/tree/main/civilizations';
 const unitURL = 'https://github.com/aoe4world/data/tree/main/units';
 const rawUnitURL = 'https://raw.githubusercontent.com/aoe4world/data/main/units';
 
+// fetchData helper function
+async function fetchData(url) {
+    try {
+        const response = await fetch(url);
+        return response.json();
+    } catch (err) {
+        console.error(`Failed to fetch data from ${url}: ${err.message}`);
+    }
+}
+
 // Get all the current possible civilizations in the game
 async function getCivs() {
-    try {
-        const response = await fetch(civURL);
-        const json = await response.json();
-        const rawCivs = json.payload.tree.items;
-        const civs = [];
-        for (const civ of rawCivs) {
-            civs.push(path.parse(civ.name).name);
-        }
-        return civs;
-    } catch (err) {
-        console.log(err.message);
-        // What else to do on fail?
-    }
+    const json = await fetchData(civURL);
+    if (!json) return [];
+    // json.payload.tree.items is an array of objects, each object has a name property
+    // item.name is the full path to the file, we only want the name of the file
+    const civs = json.payload.tree.items.map(item => path.parse(item.name).name);
+    return civs
 }
 
 // Get all the stats for the given unit and civ
 async function getStats(civ, unit) {
-    try {
-        const response = await fetch(`${rawUnitURL}/${civ}/${unit}.json`);
-        const rawStats = await response.json();
-        const stats = {
-            id: rawStats.id,
-            baseId: rawStats.baseId,
-            name: rawStats.name,
-            classes: rawStats.classes,
-            hitpoints: rawStats.hitpoints,
-            weapons: rawStats.weapons,
-            armor: rawStats.armor,
-            movement: rawStats.movement,
-        }
-        return stats;
-    } catch (err) {
-        console.log(err.message);
-        // What else to do on fail?
-    }
+        const rawStats = await fetchData(`${rawUnitURL}/${civ}/${unit}.json`);
+        if (!rawStats) return null;
+        const { id, baseId, name, classes, hitpoints, weapons, armor, movement } = rawStats;
+        return { id, baseId, name, classes, hitpoints, weapons, armor, movement };
 }
 
 // Get all the current possible units for the given civ
 async function getUnits(civ) {
-    try {
-        const response = await fetch(`${rawUnitURL}/${civ}.json`);
-        const json = await response.json();
-        const rawUnits = json.data;
-        const units = [];
-        for (const unit of rawUnits) {
-            // Removed certain classes of units
-            if (!unit.classes.includes('ship') && 
-                !unit.classes.includes('warship') &&
-                // Also removes villagers, add them back in later?
-                !unit.classes.includes('worker') &&
-                // Siege and religious will be added later probably
-                !unit.classes.includes('siege') &&
-                !unit.classes.includes('religious')) {
-                units.push(path.parse(unit.id).name);
-            }
-        }
-        return units;
-    } catch (err) {
-        console.log(err.message);
-        // What else to do on fail?
-    }
+    const json = await fetchData(`${rawUnitURL}/${civ}.json`);
+    if (!json) return [];
+    // Filter out units that are not of the classes we want
+    // We can maybe add siege and religious units later
+    const excludedClasses = new Set(['ship', 'warship', 'worker', 'siege', 'religious']);
+    const filteredUnits = json.data.filter(unit =>
+        !unit.classes.some(unitClass => excludedClasses.has(unitClass))
+    );
+    // Get only the id of the units
+    const parsedUnits = filteredUnits.map(unit => unit.id);
+    return parsedUnits;
 }
 
 module.exports = {
