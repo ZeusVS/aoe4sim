@@ -44,12 +44,6 @@ class inputClass {
     }
 }
 
-class Army {
-    constructor() {
-
-    }
-}
-
 async function getInput() {
     // Get all currently existing civs in the game
     const possibleCivs = await getCivs();

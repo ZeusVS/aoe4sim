@@ -30,6 +30,7 @@ async function getStats(civ, unit) {
         const rawStats = await response.json();
         const stats = {
             id: rawStats.id,
+            baseId: rawStats.baseId,
             name: rawStats.name,
             classes: rawStats.classes,
             hitpoints: rawStats.hitpoints,
@@ -37,7 +38,6 @@ async function getStats(civ, unit) {
             armor: rawStats.armor,
             movement: rawStats.movement,
         }
-        console.log(stats)
         return stats;
     } catch (err) {
         console.log(err.message);
