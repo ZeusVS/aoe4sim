@@ -36,9 +36,13 @@ ensure we are always up to date and don't have to rewrite code every game update
     - Melee
     - Ranged
 - Then each group is placed in a grid that is twice as high as it is wide
-    (With the order of units being the order with which they were inputted by the user)
-    - Melee units are placed one tile away from the "mirror place"
+- The order of units placement is the same as the user's input order
+    - Melee units are placed one tile away from the "mirror plane"
     - Ranged units are placed one tile away from the last melee unit
+
+#### TODO before program is actually accurate
+    - Debugging
+    - Adding collision to unit movement
 
 #### Features to possibly implement later
     - Siege units

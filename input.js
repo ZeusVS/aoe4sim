@@ -35,9 +35,13 @@ async function getArmy(civ, player) {
     while (true) {
         const unit = await inputQuestion(`Add unit to player ${player} army\n${possibleUnits}\n`, possibleUnits);
         const unitStats = await getStats(civ, unit);
-        const unitQt = await inputAmount(`Number of ${unit} units to place\n`);
-        unitStats.amount = Number(unitQt);
-        army.push(unitStats);
+        const unitQt = Number(await inputAmount(`Number of ${unit} units to place\n`));
+        unitStats.amount = unitQt;
+        if (army.find(unit => unit.id === unitStats.id)) {
+            army.find(unit => unit.id === unitStats.id).amount += unitQt
+        } else {
+            army.push(unitStats);
+        }
         console.log(`Added ${unitQt} unit(s) of ${unit} to the army of player ${player}`);
         const progress = await inputQuestion('(A)dd another unit or (C)ontinue?\n', ['a', 'A', 'c', 'C']);
         if (progress === 'c' || progress === 'C') {
