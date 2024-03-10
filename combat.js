@@ -1,10 +1,5 @@
 let isSimulationRunning = true;
 
-// Made my own sleep function
-async function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 class Unit {
     // team -1 for player 1 and team 1 for player 2, makes sense right?
     constructor(x, y, team, stats) {
@@ -179,42 +174,28 @@ function placeArmy(battlefield, army, side) {
     x = placeUnitGroup(battlefield, x, side, units[1], heights[1]);
 }
 
-async function simulationLoop(battlefield, lastUpdateTime) {
-    // Sleep for 100ms to reduce CPU usage
-    try {
-        await sleep(100);
-    } catch (err) {
-        console.error(err);
-    }
-    // Check the time passed since the last update
-    const now = Date.now();
-    const deltaTime = (now - lastUpdateTime) / 1000;
-    // Loop over all units and update them
-    // We update all the units 10 times per frame to speed up the simulation
-    // I will update this to 100 if i manage to optimize the code a bit more
-    const iterations = 10;
-    for (let i = 0; i < iterations; i++) {
-        for (const unit of battlefield) {
-            unit.update(deltaTime, battlefield);
-            // Exit from the loop if the simulation has ended
-            if (!isSimulationRunning) {
-                return;
-            }
+function simulationLoop(battlefield) {
+    // The unit update will be called with a fixed time step of deltaTime seconds
+    // A higher delta time will make the simulation run faster but less accurate
+    const deltaTime = 0.1;
+    for (const unit of battlefield) {
+        unit.update(deltaTime, battlefield);
+        // Exit from the loop if the simulation has ended
+        if (!isSimulationRunning) {
+            break;
         }
     }
-    return now;
 }
 
 // Look into using node-canvas to visualise the combat simulation
-async function simulateCombat(armies) {
+function simulateCombat(armies) {
     const battlefield = [];
     // army1 will be placed in negative x direction, army2 in positive x direction
     placeArmy(battlefield, armies.army1, -1);
     placeArmy(battlefield, armies.army2, 1);
     // Start the loop with the battlefield and the current time
-    let time = Date.now();
     while (isSimulationRunning) {
-        time = await simulationLoop(battlefield, time);
+        simulationLoop(battlefield);
     }
     return battlefield;
 }

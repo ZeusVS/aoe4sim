@@ -51,9 +51,9 @@ async function getPlayerInput(player) {
     // Get all currently existing civs in the game
     const possibleCivs = await getCivs();
     // Get civ
-    const civ = await inputQuestion(`Give civ for ${player}\n${possibleCivs}\n`, possibleCivs);
+    const civ = await inputQuestion(`Give civ for player ${player}\n${possibleCivs}\n`, possibleCivs);
     //Get army
-    const army = await getArmy(civ, 1);
+    const army = await getArmy(civ, player);
     return {civ, army}
 }
 
