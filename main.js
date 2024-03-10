@@ -1,5 +1,6 @@
 const { getInput } = require('./input.js');
 const { simulateCombat } = require('./combat.js');
+const { generateReport } = require('./report.js');
 
 async function main() {
     // userInput = Object {civ1, army1, civ2, army2}
@@ -7,7 +8,8 @@ async function main() {
     // army = [armyunit1, armyunit2,...]
     // armyunit = object {id, name, classes, hitpoints, weapons, armor, movement, amount}
     const userInput = await getInput();
-    simulateCombat(userInput);
+    const battlefieldResult = await simulateCombat(userInput);
+    console.log(generateReport(userInput, battlefieldResult));
 }
 
 main()
